@@ -11,16 +11,9 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]serSettings/
-/[Pp]ackageCache/
-/.vsconfig
-/Packages/packages-lock.json
+Brackeys-GameJam/Library/
+Brackeys-GameJam/UserSettings/
+Brackeys-GameJam/Logs/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
