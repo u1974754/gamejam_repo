@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
     private bool isGrounded = false;
     private Rigidbody2D rb;
     private Animator animator;
+    private bool lookingRight = true;
+    private float idleTimer = 0f;
 
     public TextMeshProUGUI thoughtsText;
 
@@ -33,12 +35,17 @@ public class Player : MonoBehaviour
         HandleInput();
         isGrounded = CheckIfGrounded();
         InfoForTheAnimator();
+        UpdateIdleTimer(); 
     }
 
     void HandleInput()
     {
         if(movible){
             float moveHorizontal = Input.GetAxis("Horizontal");
+
+            if((moveHorizontal > 0 && !lookingRight) || (moveHorizontal < 0 && lookingRight)){
+                FlipCharacter();
+            }
 
             Vector2 movement = new Vector2(moveHorizontal, 0);
             
@@ -159,4 +166,26 @@ public class Player : MonoBehaviour
         mainCamera.transform.position = targetPosition;
     }
 
+    private void FlipCharacter(){
+        lookingRight = !lookingRight;
+        Vector3 scale = transform.localScale;
+        scale.y *= -1;
+        transform.localScale = scale;
+    }
+
+    private void UpdateIdleTimer()
+    {
+        // Si el jugador está en idle (no se mueve y está en el suelo)
+        if (movible && Mathf.Abs(rb.linearVelocity.x) < 0.1f && isGrounded)
+        {
+            idleTimer += Time.deltaTime; // Incrementa el contador de tiempo
+        }
+        else
+        {
+            idleTimer = 0f; // Reinicia el contador si el jugador se mueve
+        }
+
+        // Actualiza el parámetro en el Animator
+        animator.SetFloat("timeOnIdle", idleTimer);
+    }
 }

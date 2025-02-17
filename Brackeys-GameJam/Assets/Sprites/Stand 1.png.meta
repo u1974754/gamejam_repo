@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b936b4f038de9a4488f77f54c7099b5a
+guid: 2d2ccff980e254d40b06ffa6edf49a74
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1387690075687647210
-    second: Caminar 2_0
+      213: -2928392054779007641
+    second: Stand 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Caminar 2_0
+      name: Stand 1_0
       rect:
         serializedVersion: 2
-        x: 39
-        y: 47
-        width: 344
-        height: 436
+        x: 47
+        y: 16
+        width: 336
+        height: 468
       alignment: 5
       pivot: {x: 1, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ae772b385c0124310800000000000000
-      internalID: 1387690075687647210
+      spriteID: 76d22d301f24c57d0800000000000000
+      internalID: -2928392054779007641
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 79fb0a952b23e0540a50e87459cfd199
+    spriteID: 10130f607bda39942ab60c4c567c5aea
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Caminar 2_0: 1387690075687647210
+      Stand 1_0: -2928392054779007641
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
