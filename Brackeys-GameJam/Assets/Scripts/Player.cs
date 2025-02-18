@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
@@ -10,46 +11,55 @@ public class Player : MonoBehaviour
     [SerializeField] private float zoomTime = 2f; // Tiempo total del efecto de zoom
     [SerializeField] private float targetZoomSize = 5f; // Tamaño de zoom deseado
 
+    [SerializeField] private LayerMask wallLayer; // LayerMask for the wall
+
     private bool movible = true;
     private bool isGrounded = false;
     private Rigidbody2D rb;
     private Animator animator;
     private bool lookingRight = true;
     private float idleTimer = 0f;
+    private Collider2D collider;
+    private bool isTouchingWall;
 
     public TextMeshProUGUI thoughtsText;
+    public List<string> thoughtTexts;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        collider = GetComponent<Collider2D>();
         StartCoroutine(ZoomOutFromPlayer());
         StartCoroutine(enterOntoScene());
-        StartCoroutine(ShowThoughts("What a nice day to eat trash..."));
+        StartCoroutine(ShowThoughts(thoughtTexts));
     }
 
-    // Update is called once per frame
     void Update()
     {
         HandleInput();
         isGrounded = CheckIfGrounded();
         InfoForTheAnimator();
         UpdateIdleTimer(); 
+        isTouchingWall = CheckIfTouchingWall();
     }
 
     void HandleInput()
     {
-        if(movible){
+        if (movible)
+        {
             float moveHorizontal = Input.GetAxis("Horizontal");
 
-            if((moveHorizontal > 0 && !lookingRight) || (moveHorizontal < 0 && lookingRight)){
+            if ((moveHorizontal > 0 && !lookingRight) || (moveHorizontal < 0 && lookingRight))
+            {
                 FlipCharacter();
             }
 
-            Vector2 movement = new Vector2(moveHorizontal, 0);
-            
-            Move(movement);
+            if (!isTouchingWall || (isTouchingWall && ((moveHorizontal > 0 && !IsTouchingWallRight()) || (moveHorizontal < 0 && !IsTouchingWallLeft()))))
+            {
+                Vector2 movement = new Vector2(moveHorizontal, 0);
+                Move(movement);
+            }
 
             if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
             {
@@ -58,7 +68,8 @@ public class Player : MonoBehaviour
         }
     }
 
-    private bool CheckIfGrounded(){
+    private bool CheckIfGrounded()
+    {
         return Mathf.Abs(rb.linearVelocity.y) < 0.01f;
     }
 
@@ -87,11 +98,29 @@ public class Player : MonoBehaviour
 
     public void setPlayerMovible(bool movible)
     {
+        rb.linearVelocity = Vector2.zero;
         this.movible = movible;
     }
 
+    private bool CheckIfTouchingWall()
+    {
+        return rb.IsTouchingLayers(wallLayer);
+    }
+
+    private bool IsTouchingWallRight()
+    {
+        Vector2 direction = Vector2.right;
+        return rb.IsTouchingLayers(wallLayer) && Physics2D.Raycast(transform.position, direction, 0.1f, wallLayer);
+    }
+
+    private bool IsTouchingWallLeft()
+    {
+        Vector2 direction = Vector2.left;
+        return rb.IsTouchingLayers(wallLayer) && Physics2D.Raycast(transform.position, direction, 0.1f, wallLayer);
+    }
+
     private IEnumerator enterOntoScene()
-    {   
+    {
         setPlayerMovible(false);
         animator.SetFloat("xVelocity", 1);
         Vector3 startPosition = new Vector3(-22, transform.position.y, transform.position.z);
@@ -109,24 +138,29 @@ public class Player : MonoBehaviour
         }
 
         animator.SetFloat("xVelocity", 0);
-        
+
         transform.position = endPosition;
         yield return new WaitForSeconds(2);
-        setPlayerMovible(true);
     }
 
-    IEnumerator ShowThoughts(string thought)
+    IEnumerator ShowThoughts(List<string> thoughts)
     {
         thoughtsText.text = "";
         thoughtsText.gameObject.SetActive(true);
-        
-        while (thoughtsText.text.Length < thought.Length)
-        {
-            thoughtsText.text += thought[thoughtsText.text.Length];
-            yield return new WaitForSeconds(0.1f);
-        }
 
-        yield return new WaitForSeconds(2);
+        foreach (string thought in thoughts)
+        {
+            setPlayerMovible(false);
+            thoughtsText.text = "";
+            while (thoughtsText.text.Length < thought.Length)
+            {
+                thoughtsText.text += thought[thoughtsText.text.Length];
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            yield return new WaitForSeconds(1);
+        }
+        setPlayerMovible(true);
         thoughtsText.gameObject.SetActive(false);
     }
 
@@ -134,17 +168,14 @@ public class Player : MonoBehaviour
     {
         Camera mainCamera = Camera.main;
 
-        // Store initial camera values
         float initialZoomSize = mainCamera.orthographicSize;
         Vector3 initialCameraPosition = mainCamera.transform.position;
 
-        // Define target zoom size and position
-        float targetZoom = initialZoomSize; // The desired zoom size is the initial size
-        Vector3 targetPosition = initialCameraPosition; // The desired position is the initial position
+        float targetZoom = initialZoomSize;
+        Vector3 targetPosition = initialCameraPosition;
 
-        // Set the camera to the player's position and zoom in
         mainCamera.orthographicSize = targetZoomSize;
-        mainCamera.transform.position = transform.position + new Vector3(0, 0, -10); // Adjust Z for 2D (usually -10)
+        mainCamera.transform.position = transform.position + new Vector3(0, 0, -10);
 
         float elapsedTime = 0f;
 
@@ -152,21 +183,18 @@ public class Player : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
 
-            // Interpolate the camera's orthographic size (zoom out)
             mainCamera.orthographicSize = Mathf.Lerp(targetZoomSize, targetZoom, elapsedTime / zoomTime);
-
-            // Interpolate the camera's position to move back to the initial position
             mainCamera.transform.position = Vector3.Lerp(transform.position + new Vector3(0, 0, -10), targetPosition, elapsedTime / zoomTime);
 
-            yield return null; // Wait for the next frame
+            yield return null;
         }
 
-        // Ensure the camera ends at the exact target values
         mainCamera.orthographicSize = targetZoom;
         mainCamera.transform.position = targetPosition;
     }
 
-    private void FlipCharacter(){
+    private void FlipCharacter()
+    {
         lookingRight = !lookingRight;
         Vector3 scale = transform.localScale;
         scale.y *= -1;
@@ -175,17 +203,20 @@ public class Player : MonoBehaviour
 
     private void UpdateIdleTimer()
     {
-        // Si el jugador está en idle (no se mueve y está en el suelo)
         if (movible && Mathf.Abs(rb.linearVelocity.x) < 0.1f && isGrounded)
         {
-            idleTimer += Time.deltaTime; // Incrementa el contador de tiempo
+            idleTimer += Time.deltaTime;
         }
         else
         {
-            idleTimer = 0f; // Reinicia el contador si el jugador se mueve
+            idleTimer = 0f;
         }
 
-        // Actualiza el parámetro en el Animator
         animator.SetFloat("timeOnIdle", idleTimer);
+    }
+
+    public void SetThoughts(List<string> thoughts)
+    {
+        thoughtTexts = thoughts;
     }
 }
