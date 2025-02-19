@@ -218,5 +218,6 @@ public class Player : MonoBehaviour
     public void SetThoughts(List<string> thoughts)
     {
         thoughtTexts = thoughts;
+        StartCoroutine(ShowThoughts(thoughtTexts));
     }
 }

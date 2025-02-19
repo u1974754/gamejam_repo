@@ -37,11 +37,15 @@ public class Level2Events_Scripts : MonoBehaviour
 
     IEnumerator MoveTheTrashCanUp()
     {
+        collider.enabled = false;
         TrashCan.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         Vector2 startPosition = TrashCan.transform.position;
-        Vector2 endPosition = startPosition + new Vector2(0, 4);
+        Vector2 endPosition = startPosition + new Vector2(0, 5);
         float duration = 2.0f;
         float elapsed = 0.0f;
+
+        player_script.setPlayerMovible(false);
+        player_script.SetThoughts(new List<string> { "Oh Sh*t!" });
 
         while (elapsed < duration)
         {
@@ -49,13 +53,10 @@ public class Level2Events_Scripts : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-
         TrashCan.transform.position = endPosition;
-        player_script.setPlayerMovible(false);
-        player_script.SetThoughts(new List<string> { "Oh Sh*t!" });
+        TrashCan.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
         yield return new WaitForSeconds(2);
         TrashCan.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-        TrashCan.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
         player_script.setPlayerMovible(true);
     }
 
