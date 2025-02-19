@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private LayerMask wallLayer; // LayerMask for the wall
 
+    private Rope ropeGrabbed = null;
+
     private bool movible = true;
     private bool isGrounded = false;
     private Rigidbody2D rb;
@@ -220,4 +222,10 @@ public class Player : MonoBehaviour
         thoughtTexts = thoughts;
         StartCoroutine(ShowThoughts(thoughtTexts));
     }
+
+    public void GrabRope(Rope rope)
+    {
+        ropeGrabbed = rope;
+    }
+
 }
