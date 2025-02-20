@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class Player : MonoBehaviour
 {
@@ -13,7 +14,12 @@ public class Player : MonoBehaviour
 
     [SerializeField] private LayerMask wallLayer; // LayerMask for the wall
 
-    private Rope ropeGrabbed = null;
+    private RopeSegment ropeGrabbed = null;
+    private RopeSegment lastRopeGrabbed = null;
+    private float cooldownAttachSameRope = 0f;
+    private float timeAttachSameRope = 0.5f;
+
+
 
     private bool movible = true;
     private bool isGrounded = false;
@@ -39,6 +45,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        CooldownRopeAttachment();
         HandleInput();
         isGrounded = CheckIfGrounded();
         InfoForTheAnimator();
@@ -48,8 +55,9 @@ public class Player : MonoBehaviour
 
     void HandleInput()
     {
-        if (movible)
+        if (ropeGrabbed != null)
         {
+            AttachToRope(ropeGrabbed);
             float moveHorizontal = Input.GetAxis("Horizontal");
 
             if ((moveHorizontal > 0 && !lookingRight) || (moveHorizontal < 0 && lookingRight))
@@ -57,17 +65,37 @@ public class Player : MonoBehaviour
                 FlipCharacter();
             }
 
-            if (!isTouchingWall || (isTouchingWall && ((moveHorizontal > 0 && !IsTouchingWallRight()) || (moveHorizontal < 0 && !IsTouchingWallLeft()))))
-            {
-                Vector2 movement = new Vector2(moveHorizontal, 0);
-                Move(movement);
-            }
+            ropeGrabbed.ApplyHoritzontalForce(moveHorizontal);
 
-            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                Jump();
+                DeAttachRope(ropeGrabbed);
             }
         }
+        else
+        {
+            if (movible)
+            {
+                float moveHorizontal = Input.GetAxis("Horizontal");
+
+                if ((moveHorizontal > 0 && !lookingRight) || (moveHorizontal < 0 && lookingRight))
+                {
+                    FlipCharacter();
+                }
+
+                if (!isTouchingWall || (isTouchingWall && ((moveHorizontal > 0 && !IsTouchingWallRight()) || (moveHorizontal < 0 && !IsTouchingWallLeft()))))
+                {
+                    Vector2 movement = new Vector2(moveHorizontal, 0);
+                    Move(movement);
+                }
+
+                if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+                {
+                    Jump();
+                }
+            }
+        }
+
     }
 
     private bool CheckIfGrounded()
@@ -223,9 +251,39 @@ public class Player : MonoBehaviour
         StartCoroutine(ShowThoughts(thoughtTexts));
     }
 
-    public void GrabRope(Rope rope)
+    public void HitByRope(RopeSegment rope)
     {
+        if (CanAttachToRope(rope)) AttachToRope(rope);
+    }
+
+    private bool CanAttachToRope(RopeSegment rope)
+    {
+        return lastRopeGrabbed==null || (ropeGrabbed == null && (lastRopeGrabbed.ropeOriginAnchor != rope.ropeOriginAnchor || cooldownAttachSameRope==0));
+    }
+
+    private void AttachToRope(RopeSegment rope)
+    {
+        transform.position = rope.transform.position;
         ropeGrabbed = rope;
+        lastRopeGrabbed = rope;
+    }
+
+    private void DeAttachRope(RopeSegment rope)
+    {
+        if (ropeGrabbed != null) 
+        {
+            Vector2 segmentVelocity = ropeGrabbed.GetComponent<Rigidbody2D>().linearVelocity;
+            rb.linearVelocity = segmentVelocity*0.3f;
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
+        ropeGrabbed = null;
+        cooldownAttachSameRope = timeAttachSameRope;
+        lastRopeGrabbed = rope;
+    }
+
+    private void CooldownRopeAttachment()
+    {
+        if (cooldownAttachSameRope>0) cooldownAttachSameRope = Mathf.Max(cooldownAttachSameRope - Time.deltaTime,0);
     }
 
 }
