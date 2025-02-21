@@ -247,7 +247,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 1074c575c88c2ef4493d315aa540c823, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -294,11 +294,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   jumpForce: 10
+  pushForce: 5
   zoomTime: 2
   targetZoomSize: 5
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  jumpSprite: {fileID: 7460046300004610927, guid: 24174c2d1649696418b1a4349aad6f28, type: 3}
   thoughtsText: {fileID: 2204460637642143682}
   thoughtTexts:
   - What a nice day to eat trash...
@@ -369,8 +368,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Patopatopato
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1fc3fc4cdce565749937bdd5b1b2f8bd, type: 2}
+  m_sharedMaterial: {fileID: 3634019299341974773, guid: 1fc3fc4cdce565749937bdd5b1b2f8bd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

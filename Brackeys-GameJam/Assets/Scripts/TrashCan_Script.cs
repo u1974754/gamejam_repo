@@ -14,8 +14,8 @@ public class TrashCan_Script : MonoBehaviour
     {
         if (other.CompareTag("Player") && !isZooming) // Asegúrate de que el personaje tenga el tag "Player"
         {
-            Debug.Log("El personaje ha entrado en el área del trigger.");
             other.GetComponent<Player>().setPlayerMovible(false);
+            other.GetComponent<Player>().MakeItEat();
             other.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
             StartCoroutine(ZoomTheCamera(other.transform.position)); // Inicia el efecto de zoom
         }

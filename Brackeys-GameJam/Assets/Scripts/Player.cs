@@ -2,25 +2,21 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private float jumpForce = 5.0f;
-    [SerializeField] private float pushForce = 5.0f; //fuerza del mapachito
+    [SerializeField] private float pushForce = 5.0f; // Fuerza del mapachito
 
     [SerializeField] private float zoomTime = 2f; // Tiempo total del efecto de zoom
     [SerializeField] private float targetZoomSize = 5f; // Tamaño de zoom deseado
-
-    [SerializeField] private LayerMask wallLayer; // LayerMask for the wall
+    [SerializeField] private Transform originalRotation;
 
     private RopeSegment ropeGrabbed = null;
     private RopeSegment lastRopeGrabbed = null;
     private float cooldownAttachSameRope = 0f;
     private float timeAttachSameRope = 0.5f;
-
-
 
     private bool movible = true;
     private bool isGrounded = false;
@@ -29,7 +25,6 @@ public class Player : MonoBehaviour
     private bool lookingRight = true;
     private float idleTimer = 0f;
     private Collider2D collider;
-    private bool isTouchingWall;
 
     public TextMeshProUGUI thoughtsText;
     public List<string> thoughtTexts;
@@ -39,6 +34,7 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
+
         StartCoroutine(ZoomOutFromPlayer());
         StartCoroutine(enterOntoScene());
         StartCoroutine(ShowThoughts(thoughtTexts));
@@ -50,8 +46,7 @@ public class Player : MonoBehaviour
         HandleInput();
         isGrounded = CheckIfGrounded();
         InfoForTheAnimator();
-        UpdateIdleTimer(); 
-        isTouchingWall = CheckIfTouchingWall();
+        UpdateIdleTimer();
     }
 
     void HandleInput()
@@ -84,11 +79,8 @@ public class Player : MonoBehaviour
                     FlipCharacter();
                 }
 
-                if (!isTouchingWall || (isTouchingWall && ((moveHorizontal > 0 && !IsTouchingWallRight()) || (moveHorizontal < 0 && !IsTouchingWallLeft()))))
-                {
-                    Vector2 movement = new Vector2(moveHorizontal, 0);
-                    Move(movement);
-                }
+                Vector2 movement = new Vector2(moveHorizontal, 0);
+                Move(movement);
 
                 if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
                 {
@@ -96,12 +88,11 @@ public class Player : MonoBehaviour
                 }
             }
         }
-
     }
 
     private bool CheckIfGrounded()
     {
-        return Mathf.Abs(rb.linearVelocity.y) < 0.01f;
+        return Mathf.Abs(rb.linearVelocity.y) < 0.1f;
     }
 
     void InfoForTheAnimator()
@@ -118,8 +109,12 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        isGrounded = false;
+        if (isGrounded)
+        {
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            isGrounded = false;
+            animator.SetBool("isJumping", true);
+        }
     }
 
     public bool isPlayerMovible()
@@ -131,23 +126,6 @@ public class Player : MonoBehaviour
     {
         rb.linearVelocity = Vector2.zero;
         this.movible = movible;
-    }
-
-    private bool CheckIfTouchingWall()
-    {
-        return rb.IsTouchingLayers(wallLayer);
-    }
-
-    private bool IsTouchingWallRight()
-    {
-        Vector2 direction = Vector2.right;
-        return rb.IsTouchingLayers(wallLayer) && Physics2D.Raycast(transform.position, direction, 0.1f, wallLayer);
-    }
-
-    private bool IsTouchingWallLeft()
-    {
-        Vector2 direction = Vector2.left;
-        return rb.IsTouchingLayers(wallLayer) && Physics2D.Raycast(transform.position, direction, 0.1f, wallLayer);
     }
 
     private IEnumerator enterOntoScene()
@@ -259,7 +237,7 @@ public class Player : MonoBehaviour
 
     private bool CanAttachToRope(RopeSegment rope)
     {
-        return lastRopeGrabbed==null || (ropeGrabbed == null && (lastRopeGrabbed.ropeOriginAnchor != rope.ropeOriginAnchor || cooldownAttachSameRope==0));
+        return lastRopeGrabbed == null || (ropeGrabbed == null && (lastRopeGrabbed.ropeOriginAnchor != rope.ropeOriginAnchor || cooldownAttachSameRope == 0));
     }
 
     private void AttachToRope(RopeSegment rope)
@@ -271,10 +249,10 @@ public class Player : MonoBehaviour
 
     private void DeAttachRope(RopeSegment rope)
     {
-        if (ropeGrabbed != null) 
+        if (ropeGrabbed != null)
         {
             Vector2 segmentVelocity = ropeGrabbed.GetComponent<Rigidbody2D>().linearVelocity;
-            rb.linearVelocity = segmentVelocity*0.3f;
+            rb.linearVelocity = segmentVelocity * 0.3f;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
         ropeGrabbed = null;
@@ -284,8 +262,9 @@ public class Player : MonoBehaviour
 
     private void CooldownRopeAttachment()
     {
-        if (cooldownAttachSameRope>0) cooldownAttachSameRope = Mathf.Max(cooldownAttachSameRope - Time.deltaTime,0);
+        if (cooldownAttachSameRope > 0) cooldownAttachSameRope = Mathf.Max(cooldownAttachSameRope - Time.deltaTime, 0);
     }
+
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Empujable")) // Asegúrate de que el objeto tenga esta etiqueta
@@ -298,5 +277,10 @@ public class Player : MonoBehaviour
                 rb.linearVelocity = new Vector2(inputX * pushForce, rb.linearVelocity.y);
             }
         }
+    }
+
+    public void MakeItEat()
+    {
+        animator.SetTrigger("Eating");
     }
 }

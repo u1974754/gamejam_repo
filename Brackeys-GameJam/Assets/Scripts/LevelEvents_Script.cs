@@ -76,7 +76,24 @@ public class Level2Events_Scripts : MonoBehaviour
             collider.enabled = false;
             rb.bodyType = RigidbodyType2D.Dynamic;
             rb.gravityScale = 1;
+            StartCoroutine(RotateBrick());
         }
+    }
+
+    IEnumerator RotateBrick()
+    {
+        Quaternion startRotation = Brick.transform.rotation;
+        Quaternion endRotation = startRotation * Quaternion.Euler(0, 0, 90);
+        float duration = 1.0f;
+        float elapsed = 0.0f;
+
+        while (elapsed < duration)
+        {
+            Brick.transform.rotation = Quaternion.Lerp(startRotation, endRotation, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        Brick.transform.rotation = endRotation;
     }
 
 }
