@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private float jumpForce = 5.0f;
+    [SerializeField] private float pushForce = 5.0f; //fuerza del mapachito
 
     [SerializeField] private float zoomTime = 2f; // Tiempo total del efecto de zoom
     [SerializeField] private float targetZoomSize = 5f; // Tamaño de zoom deseado
@@ -285,5 +286,17 @@ public class Player : MonoBehaviour
     {
         if (cooldownAttachSameRope>0) cooldownAttachSameRope = Mathf.Max(cooldownAttachSameRope - Time.deltaTime,0);
     }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Empujable")) // Asegúrate de que el objeto tenga esta etiqueta
+        {
+            Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
 
+            if (rb != null)
+            {
+                float inputX = Input.GetAxis("Horizontal"); // Captura movimiento izquierda/derecha
+                rb.linearVelocity = new Vector2(inputX * pushForce, rb.linearVelocity.y);
+            }
+        }
+    }
 }

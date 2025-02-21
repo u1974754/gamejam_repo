@@ -7,6 +7,7 @@ TagManager:
   - TrashCan
   - Wall
   - Envoirment
+  - Empujable
   layers:
   - Default
   - TransparentFX

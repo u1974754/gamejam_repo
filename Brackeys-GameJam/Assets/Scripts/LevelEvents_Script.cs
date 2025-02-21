@@ -8,6 +8,7 @@ public class Level2Events_Scripts : MonoBehaviour
     public GameObject Ceiling;
     public GameObject TrashCan;
     public GameObject Player;
+    public GameObject Brick;
 
     private Player player_script;
 
@@ -23,15 +24,16 @@ public class Level2Events_Scripts : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    void OnTriggerEnter2D (Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            if(levelNumber == 2) StartCoroutine(MoveTheTrashCanUp());
-            else if(levelNumber == 3) MakeTheCeilingFall();
+            if (levelNumber == 2) StartCoroutine(MoveTheTrashCanUp());
+            else if (levelNumber == 3) MakeTheCeilingFall();
+            else if (levelNumber == 4) MakeBrickFall();
         }
     }
 
@@ -64,6 +66,17 @@ public class Level2Events_Scripts : MonoBehaviour
     {
         collider.enabled = false;
         Ceiling.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+    }
+
+    void MakeBrickFall()
+    {
+        Rigidbody2D rb = Brick.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            collider.enabled = false;
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.gravityScale = 1;
+        }
     }
 
 }
