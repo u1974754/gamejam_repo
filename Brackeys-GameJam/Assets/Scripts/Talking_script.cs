@@ -14,9 +14,10 @@ public class Talking_script : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        GetComponent<Collider2D>().enabled = false;
         if (other.CompareTag("Player"))
         {
-            if(levelNumber == 4) Racoon_Methods.SetThoughts(new List<string> { "What am I suposed to do now?¿?", "...", "It must be something on those bricks..." });
+            if(levelNumber == 4) Racoon_Methods.SetThoughts(new List<string> { "What am I suposed to do now?!?", "...", "It must be something on those bricks..." });
             else if (levelNumber == 5) Racoon_Methods.SetThoughts(new List<string> { "Whats wrong with this guy!?" });
         }
     }

@@ -290,7 +290,9 @@ public class Player : MonoBehaviour
 
     public void MakeItEat()
     {
-        animator.SetTrigger("Eating");
+        int randomEatingTrigger = Random.Range(1, 3); // Generates a random number between 1 and 2
+        animator.SetTrigger("Eating" + randomEatingTrigger);
+        Debug.Log("Eating" + randomEatingTrigger);
         animator.SetBool("isJumping", false);
         animator.SetBool("isEating", true);
     }
