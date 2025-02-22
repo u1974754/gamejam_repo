@@ -35,9 +35,15 @@ public class LevelEvents_Scripts : MonoBehaviour
         {
             if (levelNumber == 2) StartCoroutine(MoveTheTrashCanUp());
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             else if (levelNumber == 3) MakeTheCeilingFall();
             else if (levelNumber == 4) MakeBrickFall();
             else if (levelNumber == 5) MakeRopeFall();
+=======
+            else if (levelNumber == 3) StartCoroutine(MakeTheCeilingFall());
+            else if (levelNumber == 4 || levelNumber == 5) MakeBrickFall();
+            else if (levelNumber == 6 || levelNumber == 7 || levelNumber == 8) MakeRopeAppear();
+>>>>>>> Stashed changes
 =======
             else if (levelNumber == 3) StartCoroutine(MakeTheCeilingFall());
             else if (levelNumber == 4 || levelNumber == 5) MakeBrickFall();
@@ -135,9 +141,17 @@ public class LevelEvents_Scripts : MonoBehaviour
 
         FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         yield return new WaitForSeconds(2);
         FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         Rope.SetActive(true);
+=======
+        if(levelNumber == 6) player_script.SetThoughts(new List<string> { "This isn't Funny anymore" });
+        yield return new WaitForSeconds(2);
+        FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        Rope.SetActive(true);
+        if (levelNumber != 6)Rope_2.SetActive(true);
+>>>>>>> Stashed changes
 =======
         if(levelNumber == 6) player_script.SetThoughts(new List<string> { "This isn't Funny anymore" });
         yield return new WaitForSeconds(2);
