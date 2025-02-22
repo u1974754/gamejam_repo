@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI thoughtsText;
     public List<string> thoughtTexts;
     public bool dead;
+    public RopeSegment fallingRope;
 
     void Start()
     {
@@ -247,14 +248,25 @@ public class Player : MonoBehaviour
     {
         return lastRopeGrabbed == null || (ropeGrabbed == null && (lastRopeGrabbed.ropeOriginAnchor != rope.ropeOriginAnchor || cooldownAttachSameRope == 0));
     }
-
     private void AttachToRope(RopeSegment rope)
     {
         transform.position = new Vector3(rope.transform.position.x, rope.transform.position.y, rope.transform.position.z + 1);
         ropeGrabbed = rope;
         lastRopeGrabbed = rope;
-    }
 
+       
+        if (rope.ropeOriginAnchor != null)
+        {
+            Rigidbody2D anchorRb = rope.ropeOriginAnchor.GetComponent<Rigidbody2D>();
+            if (anchorRb != null)
+            {
+                anchorRb.bodyType = RigidbodyType2D.Dynamic;
+                anchorRb.gravityScale = 1;
+                anchorRb.constraints = RigidbodyConstraints2D.None;
+            }
+        }
+    }
+    
     private void DeAttachRope(RopeSegment rope)
     {
         if (ropeGrabbed != null)
@@ -276,13 +288,13 @@ public class Player : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Empujable")) // Asegúrate de que el objeto tenga esta etiqueta
+        if (collision.gameObject.CompareTag("Empujable")) 
         {
             Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
 
             if (rb != null)
             {
-                float inputX = Input.GetAxis("Horizontal"); // Captura movimiento izquierda/derecha
+                float inputX = Input.GetAxis("Horizontal"); 
                 rb.linearVelocity = new Vector2(inputX * pushForce, rb.linearVelocity.y);
             }
         }
