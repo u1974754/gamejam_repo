@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float zoomTime = 2f; // Tiempo total del efecto de zoom
     [SerializeField] private float targetZoomSize = 5f; // Tamaño de zoom deseado
+    [SerializeField] private int levelNumber;
 
     private RopeSegment ropeGrabbed = null;
     private RopeSegment lastRopeGrabbed = null;
@@ -72,6 +73,11 @@ public class Player : MonoBehaviour
         }
         else if (!dead)
         {
+            if(Input.GetKeyDown(KeyCode.R))
+            {
+                GameObject.Find("SceneManager").GetComponent<SceneManager_Script>().RestartLevel();
+            }
+            
             if (movible)
             {
                 float moveHorizontal = Input.GetAxis("Horizontal");
@@ -253,6 +259,20 @@ public class Player : MonoBehaviour
         transform.position = rope.transform.position;
         ropeGrabbed = rope;
         lastRopeGrabbed = rope;
+<<<<<<< Updated upstream
+=======
+
+        if (rope.ropeOriginAnchor != null && levelNumber >= 8)
+        {
+            Rigidbody2D anchorRb = rope.ropeOriginAnchor.GetComponent<Rigidbody2D>();
+            if (anchorRb != null)
+            {
+                anchorRb.bodyType = RigidbodyType2D.Dynamic;
+                anchorRb.gravityScale = 1;
+                anchorRb.constraints = RigidbodyConstraints2D.None;
+            }
+        }
+>>>>>>> Stashed changes
     }
 
     private void DeAttachRope(RopeSegment rope)
@@ -289,7 +309,12 @@ public class Player : MonoBehaviour
 
     public void MakeItEat()
     {
+<<<<<<< Updated upstream
         animator.SetTrigger("Eating");
+=======
+        int randomEatingTrigger = Random.Range(1, 3); // Generates a random number between 1 and 2
+        animator.SetTrigger("Eating" + randomEatingTrigger);
+>>>>>>> Stashed changes
         animator.SetBool("isJumping", false);
         animator.SetBool("isEating", true);
     }

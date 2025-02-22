@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Level2Events_Scripts : MonoBehaviour
+public class LevelEvents_Scripts : MonoBehaviour
 {
     Collider2D collider;
     public GameObject Ceiling;
@@ -34,9 +34,15 @@ public class Level2Events_Scripts : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             if (levelNumber == 2) StartCoroutine(MoveTheTrashCanUp());
+<<<<<<< Updated upstream
             else if (levelNumber == 3) MakeTheCeilingFall();
             else if (levelNumber == 4) MakeBrickFall();
             else if (levelNumber == 5) MakeRopeFall();
+=======
+            else if (levelNumber == 3) StartCoroutine(MakeTheCeilingFall());
+            else if (levelNumber == 4 || levelNumber == 5) MakeBrickFall();
+            else if (levelNumber == 6 || levelNumber == 7 || levelNumber == 8) MakeRopeAppear();
+>>>>>>> Stashed changes
         }
     }
 
@@ -67,6 +73,7 @@ public class Level2Events_Scripts : MonoBehaviour
 
     void MakeTheCeilingFall()
     {
+        Debug.Log("MakeTheCeilingFall");
         collider.enabled = false;
         Ceiling.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
     }
@@ -127,9 +134,17 @@ public class Level2Events_Scripts : MonoBehaviour
         Brick.transform.position = targetPosition;
 
         FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+<<<<<<< Updated upstream
         yield return new WaitForSeconds(2);
         FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         Rope.SetActive(true);
+=======
+        if(levelNumber == 6) player_script.SetThoughts(new List<string> { "This isn't Funny anymore" });
+        yield return new WaitForSeconds(2);
+        FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        Rope.SetActive(true);
+        if (levelNumber != 6)Rope_2.SetActive(true);
+>>>>>>> Stashed changes
     }
 
 }
