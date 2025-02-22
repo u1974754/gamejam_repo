@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
     {
         if (ropeGrabbed != null)
         {
-            animator.SetBool("isSwinging", false);
+            animator.SetBool("isSwinging", true);
             AttachToRope(ropeGrabbed);
             float moveHorizontal = Input.GetAxis("Horizontal");
 
@@ -250,7 +250,7 @@ public class Player : MonoBehaviour
 
     private void AttachToRope(RopeSegment rope)
     {
-        transform.position = rope.transform.position;
+        transform.position = new Vector3(rope.transform.position.x, rope.transform.position.y, rope.transform.position.z + 1);
         ropeGrabbed = rope;
         lastRopeGrabbed = rope;
     }
@@ -263,6 +263,7 @@ public class Player : MonoBehaviour
             rb.linearVelocity = segmentVelocity * 0.3f;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
+        transform.position = new Vector3(transform.position.x, transform.position.y, rope.transform.position.z - 1);
         ropeGrabbed = null;
         cooldownAttachSameRope = timeAttachSameRope;
         lastRopeGrabbed = rope;
