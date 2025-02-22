@@ -35,10 +35,10 @@ public class Level2Events_Scripts : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             if (levelNumber == 2) StartCoroutine(MoveTheTrashCanUp());
-            else if (levelNumber == 3) MakeTheCeilingFall();
+            else if (levelNumber == 3) StartCoroutine(MakeTheCeilingFall());
             else if (levelNumber == 4 || levelNumber == 5) MakeBrickFall();
-            else if (levelNumber == 6) MakeRopeFall();
-            else if (levelNumber == 7 || levelNumber == 8) MakeRopeFall();
+            else if (levelNumber == 6) MakeRopeAppear();
+            else if (levelNumber == 7 || levelNumber == 8) MakeRopeAppear();
         }
     }
 
@@ -131,11 +131,11 @@ public class Level2Events_Scripts : MonoBehaviour
         Brick.transform.position = targetPosition;
 
         FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
-        player_script.SetThoughts(new List<string> { "This isn't Funny anymore" });
+        if(levelNumber == 6)player_script.SetThoughts(new List<string> { "This isn't Funny anymore" });
         yield return new WaitForSeconds(2);
         FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         Rope.SetActive(true);
-        Rope_2.SetActive(true);
+        if (levelNumber !=6) Rope_2.SetActive(true);
     }
 
 }

@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float zoomTime = 2f; // Tiempo total del efecto de zoom
     [SerializeField] private float targetZoomSize = 5f; // Tamaño de zoom deseado
+    [SerializeField] private int levelNumber; 
 
     private RopeSegment ropeGrabbed = null;
     private RopeSegment lastRopeGrabbed = null;
@@ -248,6 +249,7 @@ public class Player : MonoBehaviour
     {
         return lastRopeGrabbed == null || (ropeGrabbed == null && (lastRopeGrabbed.ropeOriginAnchor != rope.ropeOriginAnchor || cooldownAttachSameRope == 0));
     }
+
     private void AttachToRope(RopeSegment rope)
     {
         transform.position = new Vector3(rope.transform.position.x, rope.transform.position.y, rope.transform.position.z + 1);
@@ -255,7 +257,7 @@ public class Player : MonoBehaviour
         lastRopeGrabbed = rope;
 
        
-        if (rope.ropeOriginAnchor != null)
+        if ((rope.ropeOriginAnchor != null) && levelNumber > 7)
         {
             Rigidbody2D anchorRb = rope.ropeOriginAnchor.GetComponent<Rigidbody2D>();
             if (anchorRb != null)
