@@ -16,7 +16,12 @@ public class SceneManager_Script : MonoBehaviour
 
     public void LoadNextLevel()
     {
-       StartCoroutine(LoadLevelAfterDelay(SceneManager.GetActiveScene().buildIndex + 1));
+        StartCoroutine(LoadLevelAfterDelay(SceneManager.GetActiveScene().buildIndex + 1));
+    }
+
+    public void LoadLevel1()
+    {
+        StartCoroutine(LoadLevelAfterDelay(1)); // Asegúrate de que "level_1" está en el índice 1 en Build Settings.
     }
 
     public void HideDeadCanvas()
