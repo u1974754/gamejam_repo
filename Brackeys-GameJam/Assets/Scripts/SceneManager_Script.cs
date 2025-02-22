@@ -6,15 +6,27 @@ public class SceneManager_Script : MonoBehaviour
 {
     public Animator transition;
     [SerializeField] private float levelTransitionTime = 1.0f;
+    [SerializeField] private GameObject DeadCanvas;
 
     public void RestartLevel()
     {
-        // Reiniciar la escena
+        StartCoroutine(LoadLevelAfterDelay(SceneManager.GetActiveScene().buildIndex));
+        HideDeadCanvas();
     }
 
     public void LoadNextLevel()
     {
        StartCoroutine(LoadLevelAfterDelay(SceneManager.GetActiveScene().buildIndex + 1));
+    }
+
+    public void HideDeadCanvas()
+    {
+        DeadCanvas.SetActive(false);
+    }
+
+    public void ChangeToDeadCanvas()
+    {
+        DeadCanvas.SetActive(true);
     }
 
     IEnumerator LoadLevelAfterDelay(int levelNumber)

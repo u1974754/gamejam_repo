@@ -11,7 +11,6 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float zoomTime = 2f; // Tiempo total del efecto de zoom
     [SerializeField] private float targetZoomSize = 5f; // Tamaño de zoom deseado
-    [SerializeField] private Transform originalRotation;
 
     private RopeSegment ropeGrabbed = null;
     private RopeSegment lastRopeGrabbed = null;
@@ -28,6 +27,7 @@ public class Player : MonoBehaviour
 
     public TextMeshProUGUI thoughtsText;
     public List<string> thoughtTexts;
+    public bool dead;
 
     void Start()
     {
@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
     {
         if (ropeGrabbed != null)
         {
+            animator.SetBool("isSwinging", false);
             AttachToRope(ropeGrabbed);
             float moveHorizontal = Input.GetAxis("Horizontal");
 
@@ -65,10 +66,11 @@ public class Player : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                animator.SetBool("isSwinging", false);
                 DeAttachRope(ropeGrabbed);
             }
         }
-        else
+        else if (!dead)
         {
             if (movible)
             {
@@ -86,6 +88,12 @@ public class Player : MonoBehaviour
                 {
                     Jump();
                 }
+            }
+        }
+        else{
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                GameObject.Find("SceneManager").GetComponent<SceneManager_Script>().RestartLevel();
             }
         }
     }
@@ -282,5 +290,7 @@ public class Player : MonoBehaviour
     public void MakeItEat()
     {
         animator.SetTrigger("Eating");
+        animator.SetBool("isJumping", false);
+        animator.SetBool("isEating", true);
     }
 }

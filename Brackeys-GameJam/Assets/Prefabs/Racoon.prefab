@@ -297,10 +297,10 @@ MonoBehaviour:
   pushForce: 5
   zoomTime: 2
   targetZoomSize: 5
-  jumpSprite: {fileID: 7460046300004610927, guid: 24174c2d1649696418b1a4349aad6f28, type: 3}
   thoughtsText: {fileID: 2204460637642143682}
   thoughtTexts:
   - What a nice day to eat trash...
+  dead: 0
 --- !u!1 &7234719099811867507
 GameObject:
   m_ObjectHideFlags: 0

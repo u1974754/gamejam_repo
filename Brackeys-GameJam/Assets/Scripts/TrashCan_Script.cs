@@ -10,6 +10,12 @@ public class TrashCan_Script : MonoBehaviour
 
     private bool isZooming = false; // Controla si el zoom está en progreso
 
+    void Start()
+    {
+        SceneManager = GameObject.Find("SceneManager");
+        SceneManager.GetComponent<SceneManager_Script>().HideDeadCanvas();
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") && !isZooming) // Asegúrate de que el personaje tenga el tag "Player"

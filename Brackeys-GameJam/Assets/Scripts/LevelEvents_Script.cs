@@ -9,6 +9,8 @@ public class Level2Events_Scripts : MonoBehaviour
     public GameObject TrashCan;
     public GameObject Player;
     public GameObject Brick;
+    public GameObject Rope;
+    public GameObject FloorBreakable;
 
     private Player player_script;
 
@@ -34,6 +36,7 @@ public class Level2Events_Scripts : MonoBehaviour
             if (levelNumber == 2) StartCoroutine(MoveTheTrashCanUp());
             else if (levelNumber == 3) MakeTheCeilingFall();
             else if (levelNumber == 4) MakeBrickFall();
+            else if (levelNumber == 5) MakeRopeFall();
         }
     }
 
@@ -94,6 +97,39 @@ public class Level2Events_Scripts : MonoBehaviour
             yield return null;
         }
         Brick.transform.rotation = endRotation;
+    }
+
+    void MakeRopeFall()
+    {
+        Rigidbody2D rb = Brick.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            collider.enabled = false;
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.gravityScale = 1;
+            StartCoroutine(RotateBrick());
+            StartCoroutine(MoveBrickToPosition(new Vector2(-10, -8)));
+        }
+    }
+
+    IEnumerator MoveBrickToPosition(Vector2 targetPosition)
+    {
+        Vector2 startPosition = Brick.transform.position;
+        float duration = 1.0f;
+        float elapsed = 0.0f;
+
+        while (elapsed < duration)
+        {
+            Brick.transform.position = Vector2.Lerp(startPosition, targetPosition, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        Brick.transform.position = targetPosition;
+
+        FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+        yield return new WaitForSeconds(2);
+        FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        Rope.SetActive(true);
     }
 
 }
