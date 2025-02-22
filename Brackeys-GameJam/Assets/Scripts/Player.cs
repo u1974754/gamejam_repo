@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI thoughtsText;
     public List<string> thoughtTexts;
     public bool dead;
+    public RopeSegment fallingRope;
 
     void Start()
     {
@@ -53,7 +54,7 @@ public class Player : MonoBehaviour
     {
         if (ropeGrabbed != null)
         {
-            animator.SetBool("isSwinging", false);
+            animator.SetBool("isSwinging", true);
             AttachToRope(ropeGrabbed);
             float moveHorizontal = Input.GetAxis("Horizontal");
 
@@ -247,14 +248,25 @@ public class Player : MonoBehaviour
     {
         return lastRopeGrabbed == null || (ropeGrabbed == null && (lastRopeGrabbed.ropeOriginAnchor != rope.ropeOriginAnchor || cooldownAttachSameRope == 0));
     }
-
     private void AttachToRope(RopeSegment rope)
     {
-        transform.position = rope.transform.position;
+        transform.position = new Vector3(rope.transform.position.x, rope.transform.position.y, rope.transform.position.z + 1);
         ropeGrabbed = rope;
         lastRopeGrabbed = rope;
-    }
 
+       
+        if (rope.ropeOriginAnchor != null)
+        {
+            Rigidbody2D anchorRb = rope.ropeOriginAnchor.GetComponent<Rigidbody2D>();
+            if (anchorRb != null)
+            {
+                anchorRb.bodyType = RigidbodyType2D.Dynamic;
+                anchorRb.gravityScale = 1;
+                anchorRb.constraints = RigidbodyConstraints2D.None;
+            }
+        }
+    }
+    
     private void DeAttachRope(RopeSegment rope)
     {
         if (ropeGrabbed != null)
@@ -263,6 +275,7 @@ public class Player : MonoBehaviour
             rb.linearVelocity = segmentVelocity * 0.3f;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
+        transform.position = new Vector3(transform.position.x, transform.position.y, rope.transform.position.z - 1);
         ropeGrabbed = null;
         cooldownAttachSameRope = timeAttachSameRope;
         lastRopeGrabbed = rope;
@@ -275,13 +288,13 @@ public class Player : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Empujable")) // Asegúrate de que el objeto tenga esta etiqueta
+        if (collision.gameObject.CompareTag("Empujable")) 
         {
             Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
 
             if (rb != null)
             {
-                float inputX = Input.GetAxis("Horizontal"); // Captura movimiento izquierda/derecha
+                float inputX = Input.GetAxis("Horizontal"); 
                 rb.linearVelocity = new Vector2(inputX * pushForce, rb.linearVelocity.y);
             }
         }
@@ -289,7 +302,9 @@ public class Player : MonoBehaviour
 
     public void MakeItEat()
     {
-        animator.SetTrigger("Eating");
+        int randomEatingTrigger = Random.Range(1, 3); // Generates a random number between 1 and 2
+        animator.SetTrigger("Eating" + randomEatingTrigger);
+        Debug.Log("Eating" + randomEatingTrigger);
         animator.SetBool("isJumping", false);
         animator.SetBool("isEating", true);
     }

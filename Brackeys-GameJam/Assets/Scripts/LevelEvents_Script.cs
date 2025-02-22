@@ -10,6 +10,7 @@ public class Level2Events_Scripts : MonoBehaviour
     public GameObject Player;
     public GameObject Brick;
     public GameObject Rope;
+    public GameObject Rope_2;
     public GameObject FloorBreakable;
 
     private Player player_script;
@@ -37,6 +38,7 @@ public class Level2Events_Scripts : MonoBehaviour
             else if (levelNumber == 3) MakeTheCeilingFall();
             else if (levelNumber == 4) MakeBrickFall();
             else if (levelNumber == 5) MakeRopeFall();
+            else if (levelNumber == 7 || levelNumber == 8) MakeRopeFall();
         }
     }
 
@@ -130,6 +132,7 @@ public class Level2Events_Scripts : MonoBehaviour
         yield return new WaitForSeconds(2);
         FloorBreakable.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         Rope.SetActive(true);
+        Rope_2.SetActive(true);
     }
 
 }
