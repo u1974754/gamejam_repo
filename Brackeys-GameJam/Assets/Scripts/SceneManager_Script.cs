@@ -21,7 +21,7 @@ public class SceneManager_Script : MonoBehaviour
 
     public void LoadLevel1()
     {
-        StartCoroutine(LoadLevelAfterDelay(1)); // Asegúrate de que "level_1" está en el índice 1 en Build Settings.
+        StartCoroutine(LoadLevelAfterDelay(1)); // Asegï¿½rate de que "level_1" estï¿½ en el ï¿½ndice 1 en Build Settings.
     }
 
     public void HideDeadCanvas()
@@ -42,5 +42,10 @@ public class SceneManager_Script : MonoBehaviour
         yield return new WaitForSeconds(levelTransitionTime);
         
         SceneManager.LoadScene(levelNumber);
+    }
+
+    public void ChangeToMainMenu()
+    {
+        StartCoroutine(LoadLevelAfterDelay(0)); // Asegï¿½rate de que "MainMenu" estï¿½ en el ï¿½ndice 0 en Build Settings.
     }
 }

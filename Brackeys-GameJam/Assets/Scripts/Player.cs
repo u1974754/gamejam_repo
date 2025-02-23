@@ -53,6 +53,11 @@ public class Player : MonoBehaviour
 
     void HandleInput()
     {
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            GameObject.Find("SceneManager").GetComponent<SceneManager_Script>().RestartLevel();
+        }
+        
         if (ropeGrabbed != null)
         {
             animator.SetBool("isSwinging", true);
